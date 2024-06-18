@@ -2,7 +2,8 @@
 
 let gameBoard = [];
 let gameBoardCells = [];
-
+let gameBoardUnMarked = [0,1,2,3,4,5,6,7,8]
+let againstComp = false;
 // winning combinations to check 
 const winningCombos = [
         [0,1,2],
@@ -88,6 +89,8 @@ function checkWin() {
 function swapTurn() {
     if (turn === player1) {
         turn = player2;
+        computerGo()
+
     } else {
         turn = player1;
     }
@@ -104,6 +107,7 @@ gameBoardCells.forEach(function(cell){
             //cell.sign = turn.sign;
             //update array for gameboard
             gameBoard[cell.index] = turn.sign;
+            gameBoardUnMarked = gameBoardUnMarked.filter(item => item !== cell.index)
             render();
             //check win
             let ifWin = checkWin();
@@ -160,4 +164,45 @@ clear.addEventListener('click', function(){
 
 
 
+// adding multiplayer 
 
+const toggle = document.getElementById('toggle')
+toggle.addEventListener('click', function(){
+    againstComp = toggle.checked;
+    console.log(againstComp)
+    changePlayer2()
+})
+
+function changePlayer2(){
+    if (againstComp === true){
+        player2.name = 'Computer'
+    } else {
+        player2.name = 'Player 2'
+    }
+    
+    
+}
+
+
+function randomChoice(){
+    return Math.floor(Math.random() * gameBoardUnMarked.length);
+
+}
+
+function computerGo(){
+    if (againstComp === false) {
+        return
+    } else {
+        let randomIndex = randomChoice()
+        cell = gameBoardUnMarked[randomIndex]
+
+        console.log(cell)
+        let cellIndex = gameBoardCells[cell]
+        cellIndex.sign = turn.sign
+        gameBoardUnMarked = gameBoardUnMarked.filter(item => item !== cellIndex.index)
+        console.log(gameBoardUnMarked)
+        swapTurn()
+        render()
+        
+    }
+}
